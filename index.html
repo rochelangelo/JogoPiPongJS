@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>PiPong</title>
+	<style>
+		body{ 
+			padding:10px; 
+		}
+		canvas{ 
+			position:absolute;
+			top:50%;
+			left:50%;
+			margin-left: -350px; 
+			margin-top: -300px;
+			background-color: black; 
+			
+		}
+	</style>
+</head>
+<body>
+	<canvas height="600" width="700" id="Fundo"></canvas>
+	<script>
+		var fundo = document.getElementById("Fundo");
+		var ctx = fundo.getContext("2d");
+
+		var teclaE;
+		var teclaD;
+
+		var bola = {
+			y: fundo.height/2 - 20,
+			x: fundo.width/2 - 20,
+			altura: 40,
+			largura: 40,
+			direcaoX: -1,
+			direcaoY: -1,
+			velocidade: 60,
+			modVelocidae: 0
+
+		};
+
+		var blocoE = {
+			x: 10,
+			y: fundo.height/2 -90,
+			largura: 30,
+			altura: 180,
+			placar: 0,
+			velocidade: 15
+		}; 
+
+		var blocoD = {
+			x: 660,
+			y: fundo.height/2 -90,
+			largura: 30,
+			altura: 180,
+			placar: 0,
+			velocidade: 15
+		}
+
+		document.addEventListener("keydown", function(e){
+				teclaE = e.keyCode;
+				
+		})
+		
+		document.addEventListener("keydown", function(e){
+				teclaD = e.keyCode;
+				
+		})
+
+		function moveRaquete(){
+
+			if(87 == teclaE && blocoE.y > 0)
+				blocoE.y -= blocoE.velocidade;
+			if(83 == teclaE && blocoE.y < 420)
+				blocoE.y += blocoE.velocidade;
+			if(38 == teclaD && blocoD.y > 0)
+				blocoD.y -= blocoD.velocidade;
+			if(40 == teclaD && blocoD.y < 420)
+				blocoD.y += blocoD.velocidade;
+		}
+
+		function desenha(){	
+
+			ctx.clearRect(0, 0, fundo.width, fundo.height);
+
+			moveRaquete();
+
+			ctx.fillStyle = "White";
+			ctx.fillRect(blocoE.x, blocoE.y, blocoE.largura, blocoE.altura);
+			ctx.fillRect(blocoD.x, blocoD.y, blocoD.largura, blocoD.altura);
+			ctx.fillRect(bola.x, bola.y, bola.largura, bola.altura);
+
+			ctx.font = "25px Arial";
+			ctx.fillText("J1:" + blocoE.placar, 50, 50);
+
+			ctx.font = "50px Arial";
+			ctx.fillText("PiPong", fundo.width/2 -75 , 60);
+
+			ctx.font = "25px Arial";
+			ctx.fillText("J2:" + blocoD.placar, fundo.width - 125, 50);
+		}
+
+		setInterval(desenha, 20);
+
+	</script>
+</body>
+</html>
