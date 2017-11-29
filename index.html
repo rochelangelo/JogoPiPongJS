@@ -3,9 +3,6 @@
 <head>
 	<title>PiPong</title>
 	<style>
-		body{ 
-			padding:10px; 
-		}
 		canvas{ 
 			position:absolute;
 			top:50%;
@@ -33,7 +30,7 @@
 			largura: 40,
 			direcaoX: -1,
 			direcaoY: -1,
-			velocidade: 60,
+			velocidade: 20,
 			modVelocidae: 0
 
 		};
@@ -44,7 +41,7 @@
 			largura: 30,
 			altura: 180,
 			placar: 0,
-			velocidade: 15
+			velocidade: 10
 		}; 
 
 		var blocoD = {
@@ -53,7 +50,7 @@
 			largura: 30,
 			altura: 180,
 			placar: 0,
-			velocidade: 15
+			velocidade: 10
 		}
 
 		document.addEventListener("keydown", function(e){
@@ -70,12 +67,48 @@
 
 			if(87 == teclaE && blocoE.y > 0)
 				blocoE.y -= blocoE.velocidade;
-			if(83 == teclaE && blocoE.y < 420)
+			else if(83 == teclaE && blocoE.y < 420)
 				blocoE.y += blocoE.velocidade;
 			if(38 == teclaD && blocoD.y > 0)
 				blocoD.y -= blocoD.velocidade;
-			if(40 == teclaD && blocoD.y < 420)
+			else if(40 == teclaD && blocoD.y < 420)
 				blocoD.y += blocoD.velocidade;
+		}
+
+		function moveBola(){
+			if(bola.y + bola.altura >= blocoE.y && bola.y <= blocoE.y + blocoE.altura && bola.x <= blocoE.x + blocoE.largura){
+				bola.direcaoX = 1;
+				//bola.modVelocidae += 0.2;
+			}
+			else if(bola.y + bola.altura >= blocoD.y && bola.y <= blocoD.y + blocoD.altura && bola.x + bola.largura >= blocoD.x){
+				bola.direcaoX = -1;
+				//bola.modVelocidae += 0.2;
+			}
+			
+			if(bola.y <= 0)
+				bola.direcaoY = 1;
+			else if(bola.y + bola.altura >= fundo.height)
+				bola.direcaoY = -1;
+
+			bola.x = (bola.velocidade + bola.modVelocidae)* bola.direcaoX;
+			bola.y = (bola.velocidade + bola.modVelocidae) * bola.direcaoy; 
+			if(bola.x < blocoE.x + blocoE.largura - 15)
+				novoJogo("J2");
+			else if(bola.x + bola.largura > blocoD.x + 15)
+				novoJogo("J1");
+		}
+
+		function novoJogo(vencedor){
+			if(vencedor = "J1")
+				blocoE.placar++;
+			else
+				blocoD.placar++;
+
+			blocoE.y = fundo.height/2 - blocoE.altura/2;
+			blocoD.y = blocoE.y;
+			bola.y = fundo.height/2 - bola.altura/2;
+			bola.x = fundo.width/2 - bola.largura/2;
+			bola.modVelocidae = 0;
 		}
 
 		function desenha(){	
@@ -83,7 +116,7 @@
 			ctx.clearRect(0, 0, fundo.width, fundo.height);
 
 			moveRaquete();
-
+			moveBola();
 			ctx.fillStyle = "White";
 			ctx.fillRect(blocoE.x, blocoE.y, blocoE.largura, blocoE.altura);
 			ctx.fillRect(blocoD.x, blocoD.y, blocoD.largura, blocoD.altura);
@@ -99,7 +132,7 @@
 			ctx.fillText("J2:" + blocoD.placar, fundo.width - 125, 50);
 		}
 
-		setInterval(desenha, 20);
+		setInterval(desenha, 15);
 
 	</script>
 </body>
