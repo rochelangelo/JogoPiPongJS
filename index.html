@@ -9,7 +9,10 @@
 			left:50%;
 			margin-left: -350px; 
 			margin-top: -300px;
-			background-color: black; 
+			background-color: background-image: -webkit-gradient(linear, left top, left bottom, from(black), to(slategrey));
+			background-image: -webkit-linear-gradient(top, black, slategrey);
+			background-image: -moz-linear-gradient(top, black, slategrey);
+			background-image: linear-gradient(to bottom, black, slategrey);; 
 			
 		}
 	</style>
@@ -20,26 +23,14 @@
 		var fundo = document.getElementById("Fundo");
 		var ctx = fundo.getContext("2d");
 
-		var teclaE;
-		var teclaD;
-
-		var bola = {
-			y: fundo.height/2 - 20,
-			x: fundo.width/2 - 20,
-			altura: 40,
-			largura: 40,
-			direcaoX: -1,
-			direcaoY: -1,
-			velocidade: 20,
-			modVelocidae: 0
-
-		};
+		var tecla = {};
 
 		var blocoE = {
 			x: 10,
-			y: fundo.height/2 -90,
+			y: fundo.height / 2 -90,
 			largura: 30,
 			altura: 180,
+			direcaoy: 0,
 			placar: 0,
 			velocidade: 10
 		}; 
@@ -49,67 +40,87 @@
 			y: fundo.height/2 -90,
 			largura: 30,
 			altura: 180,
+			direcaoy: 0,
 			placar: 0,
 			velocidade: 10
 		}
 
-		document.addEventListener("keydown", function(e){
-				teclaE = e.keyCode;
-				
-		})
-		
-		document.addEventListener("keydown", function(e){
-				teclaD = e.keyCode;
-				
-		})
+		var bola = {
+			y: fundo.height/2 - 20,
+			x: fundo.width/2 - 20,
+			altura: 40,
+			largura: 40,
+			direcaoX: -1,
+			direcaoY: -1,
+			velocidade: 3,
+			modVelocidae: 0
+
+		};
+
+		document.addEventListener("keydown", function(e) {
+				tecla[e.keyCode] = true;
+				//alert(e.keyCode);
+			}, false);
+
+			document.addEventListener("keyup", function(e) {
+				delete tecla[e.keyCode];
+			}, false);
 
 		function moveRaquete(){
 
-			if(87 == teclaE && blocoE.y > 0)
+			if(87 in tecla && blocoE.y > 0)
 				blocoE.y -= blocoE.velocidade;
-			else if(83 == teclaE && blocoE.y < 420)
+
+			else if(83 in tecla && blocoE.y < 420)
 				blocoE.y += blocoE.velocidade;
-			if(38 == teclaD && blocoD.y > 0)
+
+			if(38 in tecla && blocoD.y > 0)
 				blocoD.y -= blocoD.velocidade;
-			else if(40 == teclaD && blocoD.y < 420)
+
+			else if(40 in tecla && blocoD.y < 420)
 				blocoD.y += blocoD.velocidade;
 		}
 
 		function moveBola(){
-			if(bola.y + bola.altura >= blocoE.y && bola.y <= blocoE.y + blocoE.altura && bola.x <= blocoE.x + blocoE.largura){
-				bola.direcaoX = 1;
-				//bola.modVelocidae += 0.2;
-			}
-			else if(bola.y + bola.altura >= blocoD.y && bola.y <= blocoD.y + blocoD.altura && bola.x + bola.largura >= blocoD.x){
-				bola.direcaoX = -1;
-				//bola.modVelocidae += 0.2;
-			}
+			if(bola.y + bola.altura >= blocoE.y && bola.y <= blocoE.y + blocoE.altura && bola.x <= blocoE.x + blocoE.largura) {
+					bola.direcaoX = 1;
+					bola.mod += 0.2;
+				}
+
+				else if(bola.y + bola.altura >= blocoD.y && bola.y <= blocoD.y + blocoD.altura && bola.x + bola.largura >= blocoD.x) {
+					bola.direcaoX = -1;
+					bola.mod += 0.2;
+				}
+
+				if(bola.y <= 0)
+					bola.direcaoY = 1;
+
+				else if(bola.y + bola.altura >= fundo.height)
+					bola.direcaoY = -1;
+
+				bola.x += (bola.velocidade + bola.modVelocidae) * bola.direcaoX;
+				bola.y += (bola.velocidade + bola.modVelocidae) * bola.direcaoY;
+
+				if(bola.x < blocoE.x + blocoE.largura - 15)
+					novoJogo("j2");
+
+				else if(bola.x + bola.largura > blocoD.x + 15)
+					novoJogo("j1");
 			
-			if(bola.y <= 0)
-				bola.direcaoY = 1;
-			else if(bola.y + bola.altura >= fundo.height)
-				bola.direcaoY = -1;
-
-			bola.x = (bola.velocidade + bola.modVelocidae)* bola.direcaoX;
-			bola.y = (bola.velocidade + bola.modVelocidae) * bola.direcaoy; 
-			if(bola.x < blocoE.x + blocoE.largura - 15)
-				novoJogo("J2");
-			else if(bola.x + bola.largura > blocoD.x + 15)
-				novoJogo("J1");
 		}
 
-		function novoJogo(vencedor){
-			if(vencedor = "J1")
-				blocoE.placar++;
-			else
-				blocoD.placar++;
+		function novoJogo(vencedor) {
+				if(vencedor == "j1")
+					++blocoE.placar;
+				else
+					++blocoD.placar;
 
-			blocoE.y = fundo.height/2 - blocoE.altura/2;
-			blocoD.y = blocoE.y;
-			bola.y = fundo.height/2 - bola.altura/2;
-			bola.x = fundo.width/2 - bola.largura/2;
-			bola.modVelocidae = 0;
-		}
+				blocoE.y = fundo.height / 2 - blocoE.altura / 2;
+				blocoD.y = blocoE.y;
+				bola.y = fundo.height / 2 - bola.altura / 2;
+				bola.x = fundo.width / 2 - bola.largura / 2;
+				bola.modVelocidae = 0;
+		};
 
 		function desenha(){	
 
@@ -133,6 +144,8 @@
 		}
 
 		setInterval(desenha, 15);
+
+		
 
 	</script>
 </body>
